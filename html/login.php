@@ -1,24 +1,36 @@
 <?php 
 include_once("functions.php");
+session_start();
 
-if($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
     $password = $_POST['password'];
 
-    if($password === '12') {
-        echo("login siccessful");
-    } else {
-        echo("login error");
-    }
+    $user = get_user_by_email($email);
 
-    die();
+    if ($user && password_verify($password, $user['password'])) {
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['role'] = $user['role'];
+        header("Location: mypage.php");
+        exit;
+    } else {
+        $error_message = "Invalid email or password.";
+    }
 }
 ?>
 
 <?php
 include("header.php");
 ?>
+
 <form method="POST">
-    <input name="email" />
-    <input name="password" type="password"/>
-    <input type="submit" /> 
+    <label for="email">Email: <input name="email" type="email" required /></label><br>
+    <label for="password">Lösenord: <input name="password" type="password" required /></label><br>
+    <input type="submit" value="Logga in" /> 
 </form>
+
+<?php
+if (isset($error_message)) {
+    echo "<p>$error_message</p>";
+}
+?>

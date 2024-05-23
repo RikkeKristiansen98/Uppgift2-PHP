@@ -14,11 +14,22 @@ function connect_database() {
     return $mysqli;
 }
 
+function get_user_by_email($email) {
+    $connect = connect_database();
+    $stmt = $connect->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $stmt->close();
+    $connect->close();
+    return $user;
+}
+
 function get_name($name = null) {
     if ($name) {
         return $name;
     }
-
     return "stranger";
 }
 
