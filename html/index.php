@@ -1,71 +1,40 @@
 <?php 
+include_once("functions.php");
 session_start();
 
-if($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-    //ADD TO DATABASE
-    $mysqli = new mysqli("db", "root", "notSecureChangeMe", "test");
+    $user = get_user_by_email($email);
 
-    $old_name = $_SESSION['name'];
-
-    $message ="Name updated ".$mysqli->real_escape_string($old_name)." -> ".$mysqli->real_escape_string($_POST['name']);
-
-    $sql = "INSERT INTO logs (message) VALUES ('$message')";
-    $result = $mysqli->query($sql);
-
-    $_SESSION['name'] = $_POST['name'];
-
-header('Location: /?success=1');
-
-    exit;
+    if ($user && password_verify($password, $user['password'])) {
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['role'] = $user['role'];
+        header("Location: mypage.php");
+        exit;
+    } else {
+        $error_message = "Fel mail eller lösenord, forsök igen.";
+    }
 }
-?><html>
-    <body>
-        <?php 
-
-      if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        if(isset($_GET['success']) && $_GET['success'] == '1'){
 ?>
-<div style="border: 2px solid #FF0000">
-Name updated
-        </div>
+
 <?php
-        }
-             if(isset($_SESSION['name']) && $_SESSION['name']){
-                echo "Hello " . $_SESSION['name']; 
-                ?>
-                   <p>Change name</p>
-                   <form method="POST">
-                    <input name="name" value="<?php echo($_SESSION['name']); ?>"/>
-                    <input type="submit" />
-                </form>
-                <?php
-                }
-                else {
-                    ?>
-                   <p>WHo are you?</p>
-                   <form method="POST">
-                    <input name="name" />
-                    <input type="submit" />
-                </form>
-                <?php
-                }
-
-                ?> 
-<h2>Logs</h2>
-                <?php
-$mysqli = new mysqli("db", "root", "notSecureChangeMe", "test");
-
-$result = $mysqli->query("SELECT * FROM logs");
-
-$rows = $result->fetch_all(MYSQLI_ASSOC);
-
-foreach($rows as $row) {
+include("header.php");
 ?>
-<p><?php echo($row["message"]); ?></p>
+
+<form method="POST">
+    <label for="email">Email: <input name="email" type="email" required /></label><br>
+    <label for="password">Lösenord: <input name="password" type="password" required /></label><br>
+    <input type="submit" value="Logga in" /> 
+</form>
+
 <?php
+if (isset($error_message)) {
+    echo "<p>$error_message</p>";
 }
-                }
-        ?>
-        </body>
-        </html>
+?>
+
+<p>Om du inte har ett konto kan du skapa ett:</p>
+
+<a href="signup.php"><button>Skapa konto</button></a>

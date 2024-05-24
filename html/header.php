@@ -4,9 +4,10 @@
 </title>
     <body>
         <header>
-            <div>logo</div>
+            <h3>Nyhetsbrev sida</h3>
             <nav> 
-                <a href="#">Länk 1</a>
+                <a href="mySubsciptions.php">Mina prenumerationer</a>
                 <a href="#">Länk 2</a>
+                <br></br>
 </nav>
 </header>

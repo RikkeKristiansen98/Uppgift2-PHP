@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sssss", $first_name, $last_name, $email, $password_hash, $role);
 
     if ($stmt->execute()) {
-        echo "Konto skapat!";
+        echo "Konto skapat! <a href='newsletters.php'>Utforska utbudet av nyhetsbrev</a>";
     } else {
         echo "Fel: " . htmlspecialchars($stmt->error);
     }
