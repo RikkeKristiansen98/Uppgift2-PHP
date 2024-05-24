@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: mypage.php");
         exit;
     } else {
-        $error_message = "Invalid email or password.";
+        $error_message = "Fel email eller lösenord, försök igen";
     }
 }
 ?>
@@ -32,5 +32,11 @@ include("header.php");
 <?php
 if (isset($error_message)) {
     echo "<p>$error_message</p>";
+}
+?>
+<?php
+// Kontrollera om användaren är inloggad för att visa logga ut-länken eller knappen
+if (isset($_SESSION['user_id'])) {
+    echo '<a href="logout.php">Logga ut</a>';
 }
 ?>
