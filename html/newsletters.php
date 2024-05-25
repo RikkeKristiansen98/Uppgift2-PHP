@@ -1,6 +1,8 @@
 <?php
 include 'functions.php';
 
+include("header.php");
+
 $connect = connect_database(); 
 
 $sql = "SELECT * FROM newsletter ORDER BY id DESC";

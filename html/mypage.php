@@ -1,3 +1,14 @@
+<?php
+session_start();
+include("functions.php");
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: index.php");
+    exit;
+}
+
+include("header.php");
+?>
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
