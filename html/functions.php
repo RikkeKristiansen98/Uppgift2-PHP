@@ -14,6 +14,45 @@ function connect_database() {
     return $mysqli;
 }
 
+function get_user_by_email($email) {
+    $connect = connect_database();
+    $stmt = $connect->prepare("SELECT * FROM users WHERE user_email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $stmt->close();
+    $connect->close();
+    return $user;
+}
+
+
+function get_user_subscribed_newsletters($user_email) {
+    $mysqli = connect_database();
+    
+    $query = "SELECT newsletter FROM subscriptions WHERE user_email = ?";
+    
+    $subscribed_newsletters = array();
+    
+    if ($stmt = $mysqli->prepare($query)) {
+        $stmt->bind_param("s", $user_email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+ 
+        while ($row = $result->fetch_assoc()) {
+            $subscribed_newsletters[] = $row['newsletter']; 
+        }
+        
+        $stmt->close();
+    } else {
+        echo "Error: " . $mysqli->error;
+    }
+    
+    $mysqli->close();
+    
+    return $subscribed_newsletters;
+}
+
 function get_user_by_id($user_id) {
     $connect = connect_database();
     $stmt = $connect->prepare("SELECT * FROM users WHERE id = ?");
@@ -26,27 +65,4 @@ function get_user_by_id($user_id) {
     return $user;
 }
 
-//Ta bort
-function get_user_by_email($email) {
-    $connect = connect_database();
-    $stmt = $connect->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-    $stmt->close();
-    $connect->close();
-    return $user;
-}
-
-function get_name($name = null) {
-    if ($name) {
-        return $name;
-    }
-    return "stranger";
-}
-
-function get_window_title($title) {
-    return $title . ' - My awesome site';
-}
 ?>
