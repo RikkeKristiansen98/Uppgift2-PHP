@@ -14,6 +14,19 @@ function connect_database() {
     return $mysqli;
 }
 
+function get_user_by_id($user_id) {
+    $connect = connect_database();
+    $stmt = $connect->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $stmt->close();
+    $connect->close();
+    return $user;
+}
+
+//Ta bort
 function get_user_by_email($email) {
     $connect = connect_database();
     $stmt = $connect->prepare("SELECT * FROM users WHERE email = ?");

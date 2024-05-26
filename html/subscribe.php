@@ -1,8 +1,9 @@
-<?php 
+<?php
+session_start();
 include 'functions.php';
 
 function validate_input($data) {
-    $data = trim($data); // för ta bort eventuella onödiga mellanslag
+    $data = trim($data); // ta bort eventuella onödiga mellanslag
     $data = htmlspecialchars($data);
     return $data;
 }
@@ -10,41 +11,41 @@ function validate_input($data) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $connect = connect_database();
 
-    $first_name = validate_input($_POST['firstname']);
-    $last_name = validate_input($_POST['lastname']);
-    $email = validate_input($_POST['email']);
-    $password = validate_input($_POST['password']);
-    $role = validate_input($_POST['role']);
+    if (isset($_POST['newsletter_title']) && isset($_POST['user_email'])) {
+        $newsletter_title = validate_input($_POST['newsletter_title']);
+        $user_email = validate_input($_POST['user_email']);
 
-    if (empty($first_name) || empty($last_name) || empty($email) || empty($password) || empty($role)) {
-        echo "Alla fält är obligatoriska.";
-        exit;
-    }
+        // Kollar om användaren redan prenumererar
+        $check_sql = "SELECT * FROM subscriptions WHERE newsletter = ? AND user_email = ?";
+        $stmt = $connect->prepare($check_sql);
+        $stmt->bind_param("ss", $newsletter_title, $user_email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    // Validera 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "Ogiltig e-postadress.";
-        exit;
-    }
+        if ($result->num_rows > 0) {
+            $_SESSION['message'] = "Du prenumererar redan på detta nyhetsbrev.";
+        } else {
+            $sql = "INSERT INTO subscriptions (newsletter, user_email) VALUES (?, ?)";
+            $stmt = $connect->prepare($sql);
+            if ($stmt === false) {
+                die('Prepare failed: ' . htmlspecialchars($connect->error));
+            }
 
-    // Hasha lösenord
-    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+            $stmt->bind_param("ss", $newsletter_title, $user_email);
 
-    $sql = "INSERT INTO users (firstname, lastname, email, password, role) VALUES (?, ?, ?, ?, ?)";
-    $stmt = $connect->prepare($sql);
-    if ($stmt === false) {
-        die('Prepare failed: ' . htmlspecialchars($connect->error));
-    }
+            if ($stmt->execute()) {
+                $_SESSION['message'] = "Du prenumererar nu på nyhetsbrevet.";
+            } else {
+                $_SESSION['message'] = "Fel: " . htmlspecialchars($stmt->error);
+            }
+        }
 
-    $stmt->bind_param("sssss", $first_name, $last_name, $email, $password_hash, $role);
-
-    if ($stmt->execute()) {
-        echo "Konto skapat! <a href='newsletters.php'>Utforska utbudet av nyhetsbrev</a>";
+        $stmt->close();
+        $connect->close();
     } else {
-        echo "Fel: " . htmlspecialchars($stmt->error);
+        $_SESSION['message'] = "Felaktig begäran.";
     }
 
-    $stmt->close();
-    $connect->close();
+    header("Location: newsletters.php");
+    exit;
 }
-?>
