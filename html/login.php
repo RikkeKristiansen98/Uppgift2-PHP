@@ -9,9 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = get_user_by_email($email);
 
     if ($user && password_verify($password, $user['password'])) {
+        $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_id'] = $user['id']; 
         $_SESSION['role'] = $user['role'];
-
         header("Location: mypage.php");
         exit;
     } else {

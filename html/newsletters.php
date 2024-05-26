@@ -1,6 +1,6 @@
 <?php
-include 'functions.php';
 session_start();
+include 'functions.php';
 include("header.php");
 
 if (isset($_SESSION['message'])) {
@@ -15,12 +15,12 @@ $result = $connect->query($sql);
 $user_role = isset($_SESSION['role']) ? $_SESSION['role'] : null;
 $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
-// hämtar email från db
+
 $user_email = null;
 if ($user_id) {
     $user = get_user_by_id($user_id);
     if ($user) {
-        $user_email = $user['email'];
+        $user_email = $user['user_email'];
     }
 }
 
