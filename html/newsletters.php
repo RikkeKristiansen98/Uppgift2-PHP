@@ -38,7 +38,7 @@ if ($result->num_rows > 0) {
                   </form>';
         } elseif ($user_role === 'customer') {
             // om kund är inloggad, visa möjlighet att redigera 
-            echo '<a href="edit_newsletter.php?id=' . htmlspecialchars($row['id']) . '">
+            echo '<a href="editNewsletter.php?id=' . htmlspecialchars($row['id']) . '">
                     <button>Klicka för att redigera nyhetsbrev</button>
                   </a>';
         }

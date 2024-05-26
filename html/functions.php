@@ -65,4 +65,26 @@ function get_user_by_id($user_id) {
     return $user;
 }
 
+function get_newsletter_by_id($id) {
+    $connect = connect_database();
+    $stmt = $connect->prepare("SELECT * FROM newsletter WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $newsletter = $result->fetch_assoc();
+    $stmt->close();
+    $connect->close();
+    return $newsletter;
+}
+
+function update_newsletter($id, $title, $description) {
+    $connect = connect_database();
+    $stmt = $connect->prepare("UPDATE newsletter SET title = ?, description = ? WHERE id = ?");
+    $stmt->bind_param("ssi", $title, $description, $id);
+    $success = $stmt->execute();
+    $stmt->close();
+    $connect->close();
+    return $success;
+}
+
 ?>
