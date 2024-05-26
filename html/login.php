@@ -9,8 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = get_user_by_email($email);
 
     if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_id'] = $user['id']; 
         $_SESSION['role'] = $user['role'];
+
         header("Location: mypage.php");
         exit;
     } else {
@@ -35,7 +36,6 @@ if (isset($error_message)) {
 }
 ?>
 <?php
-// Kontrollera om användaren är inloggad för att visa logga ut-länken eller knappen
 if (isset($_SESSION['user_id'])) {
     echo '<a href="logout.php">Logga ut</a>';
 }

@@ -1,4 +1,11 @@
-<h1>Skapa ett konto</h1>
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skapa ett konto</title>
+</head>
+<body>
 
 <form action="subscribe.php" method="post">
     <label for="firstname">Namn: <input type="text" name="firstname" required></label><br>
@@ -12,4 +19,6 @@
         </select>
     </label><br>
     <input type="submit" name="submit" value="Skapa konto">
-</form>
+    </form>
+</body>
+</html>
