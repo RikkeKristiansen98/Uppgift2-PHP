@@ -26,9 +26,9 @@ if ($user_id) {
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
+
         echo "<h1>" . htmlspecialchars($row['title']) . "</h1>";
         echo "<p>" . htmlspecialchars($row['description']) . "</p>";
-
         if ($user_role === 'subscriber' && $user_id) {
             // visa prenumerationsknapp för prenumeranter
             echo '<form action="subscribe.php" method="post" style="display:inline;">
