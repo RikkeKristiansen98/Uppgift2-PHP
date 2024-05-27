@@ -26,33 +26,6 @@ function get_user_by_email($email) {
     return $user;
 }
 
-
-function get_user_subscribed_newsletters($user_email) {
-    $mysqli = connect_database();
-    
-    $query = "SELECT newsletter FROM subscriptions WHERE user_email = ?";
-    
-    $subscribed_newsletters = array();
-    
-    if ($stmt = $mysqli->prepare($query)) {
-        $stmt->bind_param("s", $user_email);
-        $stmt->execute();
-        $result = $stmt->get_result();
- 
-        while ($row = $result->fetch_assoc()) {
-            $subscribed_newsletters[] = $row['newsletter']; 
-        }
-        
-        $stmt->close();
-    } else {
-        echo "Error: " . $mysqli->error;
-    }
-    
-    $mysqli->close();
-    
-    return $subscribed_newsletters;
-}
-
 function get_user_by_id($user_id) {
     $connect = connect_database();
     $stmt = $connect->prepare("SELECT * FROM users WHERE id = ?");
@@ -87,4 +60,29 @@ function update_newsletter($id, $title, $description) {
     return $success;
 }
 
+function get_user_subscribed_newsletters($user_email) {
+    $connect = connect_database();
+
+    $query = "SELECT s.user_email, n.title
+              FROM subscriptions s
+              INNER JOIN newsletter n ON s.newsletter = n.title 
+              WHERE n.user = ?";
+    
+    $stmt = $connect->prepare($query);
+    $stmt->bind_param("s", $user_email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $subscribed_newsletters = array();
+    while ($row = $result->fetch_assoc()) {
+        $subscribed_newsletters[] = array(
+            'user_email' => $row['user_email'],
+            'newsletter_title' => $row['title']
+        );
+    }
+    $stmt->close();
+    $connect->close();
+
+    return $subscribed_newsletters;
+}
 ?>

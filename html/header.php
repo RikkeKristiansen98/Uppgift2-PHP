@@ -13,16 +13,22 @@ if (session_status() === PHP_SESSION_NONE) {
 <body>
        <header>
             <h3>Nyhetsbrev sida</h3>
+            <?php if (isset($_SESSION['user_id'])): ?>
             <nav> 
-                <a href="mySubsciptions.php">Mina prenumerationer</a>
-                <a href="newsletters.php">Alla nyhetsbrev</a>
+            <?php if ($_SESSION['role'] === 'customer'): ?>
+            <a href="mySubscribers.php">Mina prenumeranter</a>
+        <?php else: ?>
+            <a href="mySubsciptions.php">Mina prenumerationer</a>
+        <?php endif; ?>                
+        <a href="newsletters.php">Alla nyhetsbrev</a>
                 <?php if (isset($_SESSION['user_id'])): ?>
-            <!-- Visa logga ut-knappen om användaren är inloggad -->
-            <form action="logout.php" method="post" style="display:inline;">
+                <form action="logout.php" method="post" style="display:inline;">
                 <button type="submit">Logga ut</button>
             </form>
+            <?php endif; ?>
+
+            </nav>
         <?php endif; ?>
-</nav>
 </header>
-                </body>
-                </html>
+</body>
+</html>
