@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include("header.php");
 ?>
 
+<a href="newsletters.php"><button>Kolla utbud av nyhetsbrev</button></a> <br></br>
 <form method="POST">
     <label for="email">Email: <input name="email" type="email" required /></label><br>
     <label for="password">Lösenord: <input name="password" type="password" required /></label><br>
