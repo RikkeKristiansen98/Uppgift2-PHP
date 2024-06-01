@@ -1,4 +1,5 @@
 <?php
+//TODO länk till varje nyhetsbrevs sida
 session_start();
 include 'functions.php';
 include("header.php");
@@ -30,14 +31,12 @@ if ($result->num_rows > 0) {
         echo "<h1>" . htmlspecialchars($row['title']) . "</h1>";
         echo "<p>" . htmlspecialchars($row['description']) . "</p>";
         if ($user_role === 'subscriber' && $user_id) {
-            // visa prenumerationsknapp för prenumeranter
             echo '<form action="subscribe.php" method="post" style="display:inline;">
                     <input type="hidden" name="newsletter_title" value="' . htmlspecialchars($row['title']) . '">
                     <input type="hidden" name="user_email" value="' . htmlspecialchars($user_email) . '">
                     <button type="submit">Abonnera på nyhetsbrev</button>
                   </form>';
         } elseif ($user_role === 'customer') {
-            // om kund är inloggad, visa möjlighet att redigera 
             echo '<a href="editNewsletter.php?id=' . htmlspecialchars($row['id']) . '">
                     <button>Klicka för att redigera nyhetsbrev</button>
                   </a>';
@@ -50,4 +49,13 @@ if ($result->num_rows > 0) {
 }
 
 $connect->close();
-?>
+if (!$user_id) { 
+echo '<!DOCTYPE html>
+<html>
+<body>
+    <p>Logga in eller skapa et konto för att få tillgång till nyhetsbrev</p>
+<a href="login.php"><button>Logga in</button></a><a href="signUp.php"><button>Skapa konto</button></a>
+</body>
+    </html>';
+}
+    ?>

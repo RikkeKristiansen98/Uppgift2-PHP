@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_email = isset($_SESSION['user_email']) ? $_SESSION['user_email'] : null;
-$subscribed_newsletters = get_user_subscribed_newsletters($user_email);
+$subscribed_newsletters = get_user_subscriptions($user_email);
 
 include("header.php"); 
 
@@ -33,6 +33,4 @@ if (!empty($subscribed_newsletters)) {
 } else {
     echo "<p>Du har inga prenumerationer.</p>";
 }
-
-include("footer.php"); 
 ?>

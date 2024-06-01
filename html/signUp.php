@@ -1,7 +1,8 @@
 <?php
-session_start(); // Flyttad session_start till början av filen
+session_start(); 
 
 include 'functions.php';
+include("header.php"); 
 
 function validate_input($data) {
     $data = trim($data);
@@ -9,10 +10,9 @@ function validate_input($data) {
     return $data;
 }
 
-// Kontrollera om det finns ett meddelande att visa och visa det
 if (isset($_SESSION['message'])) {
     echo '<p>' . $_SESSION['message'] . '</p>';
-    unset($_SESSION['message']); // Rensa meddelandet från sessionen efter att det har visats
+    unset($_SESSION['message']); 
 }
 ?>
 
