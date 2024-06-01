@@ -1,4 +1,5 @@
 <?php
+//TODO länk till varje nyhetsbrevs sida
 session_start();
 include 'functions.php';
 include("header.php");
