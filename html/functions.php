@@ -60,29 +60,29 @@ function update_newsletter($id, $title, $description) {
     return $success;
 }
 
-function get_user_subscribed_newsletters($user_email) {
+function get_user_subscriptions($user_email) {
     $connect = connect_database();
 
-    $query = "SELECT s.user_email, n.title
+    $query = "SELECT n.title
               FROM subscriptions s
               INNER JOIN newsletter n ON s.newsletter = n.title 
-              WHERE n.user = ?";
+              WHERE s.user_email = ?";
     
     $stmt = $connect->prepare($query);
     $stmt->bind_param("s", $user_email);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    $subscribed_newsletters = array();
+    $subscriptions = array();
     while ($row = $result->fetch_assoc()) {
-        $subscribed_newsletters[] = array(
-            'user_email' => $row['user_email'],
-            'newsletter_title' => $row['title']
-        );
+        $subscriptions[] = $row['title'];
     }
     $stmt->close();
     $connect->close();
 
-    return $subscribed_newsletters;
+    return $subscriptions;
 }
+
+// TODO: skapa en function: get_customers_subscribers 
+
 ?>
