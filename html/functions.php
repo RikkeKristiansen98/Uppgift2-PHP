@@ -14,6 +14,46 @@ function connect_database() {
     return $mysqli;
 }
 
+function send_email() {
+    $domain = //.env
+
+    //hämta mottagare
+    $to = "Rikke.kristiansen@medieinstitutet.se";
+    //Hämta subject och body
+    $ubject = "Testing email";
+    $body = "Reset password here";
+    //Hämta från 
+    $from = "postmaster@$domain";
+
+    //Hämta API nyckel
+    $api_key=//.env; 
+
+    //skicka brev
+    $endpoint = "https://api.mailgun.net/v3/$domain/messages";
+    //Lägga till innehåll
+    $ch = curl_init($endpoint);
+
+$form_fields = array (
+    'to' => $to, 
+    'from' => $from,
+    'subject' => $subject, 
+    'text' => $body
+);
+$query = http_build_query($form_fields);
+var_dump($query);
+
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_USERPWD, "api:$api_key");
+    //läs svar
+   $result =  curl_exec($ch);
+$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+//läs svaret 
+    curl_close($ch);
+}
+
+
 function get_user_by_email($email) {
     $connect = connect_database();
     $stmt = $connect->prepare("SELECT * FROM users WHERE user_email = ?");
