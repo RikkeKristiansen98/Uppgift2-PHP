@@ -1,4 +1,8 @@
 <?php 
+require_once __DIR__ . '/config.php'; 
+
+$env = loadEnv(__DIR__ . '/.env');
+
 function connect_database() {
     $host = "db";
     $username = "root";
@@ -14,44 +18,51 @@ function connect_database() {
     return $mysqli;
 }
 
-function send_email() {
-    $domain = //.env
-
-    //hämta mottagare
-    $to = "Rikke.kristiansen@medieinstitutet.se";
-    //Hämta subject och body
-    $ubject = "Testing email";
-    $body = "Reset password here";
-    //Hämta från 
+function send_email($to, $subject, $body) {
+    $domain = DOMAIN_MAILGUN;
+    $api_key = API_KEY;
     $from = "postmaster@$domain";
 
-    //Hämta API nyckel
-    $api_key=//.env; 
+    //var_dump("Domain: $domain");
+    //var_dump("API Key: $api_key");
 
-    //skicka brev
-    $endpoint = "https://api.mailgun.net/v3/$domain/messages";
-    //Lägga till innehåll
-    $ch = curl_init($endpoint);
+    $ch = curl_init();
 
-$form_fields = array (
-    'to' => $to, 
-    'from' => $from,
-    'subject' => $subject, 
-    'text' => $body
-);
-$query = http_build_query($form_fields);
-var_dump($query);
-
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL, "https://api.mailgun.net/v3/$domain/messages");
+    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_setopt($ch, CURLOPT_USERPWD, "api:$api_key");
-    //läs svar
-   $result =  curl_exec($ch);
-$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-//läs svaret 
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, [
+        'from' => $from,
+        'to' => $to,
+        'subject' => $subject,
+        'text' => $body,
+    ]);
+
+    $result = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($result === false) {
+        $error = curl_error($ch);
+        $errno = curl_errno($ch);
+        var_dump("Curl error ($errno): $error");
+        var_dump("Curl result: ", $result);
+    } else {
+        var_dump("HTTP status code: $http_code");
+        var_dump("Response: $result");
+    }
+
     curl_close($ch);
+
+    if ($http_code == 200) {
+        return true;
+    } else {
+        return false;
+    }
 }
+
+
 
 
 function get_user_by_email($email) {
