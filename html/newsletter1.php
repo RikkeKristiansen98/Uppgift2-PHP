@@ -3,7 +3,7 @@ session_start();
 include 'functions.php';
 include("header.php");
 
-$newsletter_id = 1;
+$newsletter_id = 2;
 
 $connect = connect_database();
 

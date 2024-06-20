@@ -62,9 +62,6 @@ function send_email($to, $subject, $body) {
     }
 }
 
-
-
-
 function get_user_by_email($email) {
     $connect = connect_database();
     $stmt = $connect->prepare("SELECT * FROM users WHERE user_email = ?");
@@ -133,7 +130,38 @@ function get_user_subscriptions($user_email) {
 
     return $subscriptions;
 }
+function get_customers_subscribers($customer_email) {
+    $connect = connect_database();
 
-// TODO: skapa en function: get_customers_subscribers 
+    $query = "SELECT u.firstname, u.lastname, u.user_email, n.title
+              FROM subscriptions s
+              INNER JOIN users u ON s.user_email = u.user_email
+              INNER JOIN newsletter n ON s.newsletter = n.title
+              WHERE n.user = ?";
+    
+    $stmt = $connect->prepare($query);
+    $stmt->bind_param("s", $customer_email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
+    $subscribers = array();
+    while ($row = $result->fetch_assoc()) {
+        $subscribers[] = $row;
+    }
+    $stmt->close();
+    $connect->close();
+
+    return $subscribers;
+}
+function get_newsletters_by_user_email($user_email) {
+    $connect = connect_database();
+    $stmt = $connect->prepare("SELECT * FROM newsletter WHERE user = ?");
+    $stmt->bind_param("s", $user_email); 
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $newsletters = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    $connect->close();
+    return $newsletters;
+}
 ?>

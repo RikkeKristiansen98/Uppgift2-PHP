@@ -53,7 +53,7 @@ if (!$user_id) {
 echo '<!DOCTYPE html>
 <html>
 <body>
-    <p>Logga in eller skapa et konto för att få tillgång till nyhetsbrev</p>
+    <p>Logga in eller skapa et konto för att prenumerera på nyhetsbrev</p>
 <a href="login.php"><button>Logga in</button></a><a href="signUp.php"><button>Skapa konto</button></a>
 </body>
     </html>';
