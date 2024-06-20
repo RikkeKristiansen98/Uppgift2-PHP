@@ -11,24 +11,23 @@ if (session_status() === PHP_SESSION_NONE) {
     <title><?php echo isset($title) ? $title : 'Nyhetsbrev sida'; ?></title>
 </head>
 <body>
-       <header>
-            <h3>Nyhetsbrev sida</h3>
-            <?php if (isset($_SESSION['user_id'])): ?>
-            <nav> 
+<header>
+        <h3>Nyhetsbrev sida</h3>
+        <?php if (isset($_SESSION['user_id'])): ?>
+        <nav> 
             <?php if ($_SESSION['role'] === 'customer'): ?>
             <a href="mySubscribers.php">Mina prenumeranter</a>
-        <?php else: ?>
+            <?php else: ?>
             <a href="mySubsciptions.php">Mina prenumerationer</a>
-        <?php endif; ?>                
-        <a href="newsletters.php">Alla nyhetsbrev</a>
-                <?php if (isset($_SESSION['user_id'])): ?>
-                <form action="logout.php" method="post" style="display:inline;">
+            <?php endif; ?>                
+            <a href="<?php echo ($_SESSION['role'] === 'customer') ? 'myNewsletter.php' : 'newsletters.php'; ?>">
+                <?php echo ($_SESSION['role'] === 'customer') ? 'Mina nyhetsbrev' : 'Alla nyhetsbrev'; ?>
+            </a>
+            <form action="logout.php" method="post" style="display:inline;">
                 <button type="submit">Logga ut</button>
             </form>
-            <?php endif; ?>
-
-            </nav>
+        </nav>
         <?php endif; ?>
-</header>
+    </header>
 </body>
 </html>

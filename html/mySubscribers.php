@@ -1,25 +1,44 @@
 <?php
 session_start();
-include("functions.php");
+require 'functions.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+if (!isset($_SESSION['user_email']) || $_SESSION['role'] !== 'customer') {
+    header('Location: login.php');
     exit;
 }
 
-include("header.php"); 
+$userEmail = $_SESSION['user_email'];
 
-$user_email = $_SESSION['user_email'];
-$subscribed_newsletters = get_customers_subscribers($user_email);
-
-if (!empty($subscribed_newsletters)) {
-    echo "<h2>Mina prenumeranter</h2>";
-    echo "<ul>";
-    foreach ($subscribed_newsletters as $subscriber) {
-        echo "<li>" . htmlspecialchars($subscriber) . "</li>";
-    }
-    echo "</ul>";
-} else {
-    echo "<p>Du har inga prenumeranter</p>";
-}
+$subscribers = get_customers_subscribers($userEmail);
 ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mina prenumeranter</title>
+</head>
+<body>
+    <h1>Mina prenumeranter</h1>
+    <?php if (empty($subscribers)): ?>
+        <p>Du har inga prenumeranter.</p>
+    <?php else: ?>
+        <table>
+            <tr>
+                <th>Förnamn</th>
+                <th>Efternamn</th>
+                <th>E-post</th>
+                <th>Nyhetsbrev</th>
+            </tr>
+            <?php foreach ($subscribers as $subscriber): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($subscriber['firstname']); ?></td>
+                    <td><?php echo htmlspecialchars($subscriber['lastname']); ?></td>
+                    <td><?php echo htmlspecialchars($subscriber['user_email']); ?></td>
+                    <td><?php echo htmlspecialchars($subscriber['title']); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+        <a href="index.php"><button>Gå tillbaka</button></a>
+    <?php endif; ?>
+</body>
+</html>
