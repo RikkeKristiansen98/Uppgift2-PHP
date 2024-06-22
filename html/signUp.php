@@ -4,12 +4,6 @@ session_start();
 include 'functions.php';
 include("header.php"); 
 
-function validate_input($data) {
-    $data = trim($data);
-    $data = htmlspecialchars($data);
-    return $data;
-}
-
 if (isset($_SESSION['message'])) {
     echo '<p>' . $_SESSION['message'] . '</p>';
     unset($_SESSION['message']); 

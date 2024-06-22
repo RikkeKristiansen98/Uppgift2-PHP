@@ -21,16 +21,19 @@ include("header.php");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mina nyhetsbrev</title>
+    <title>Mitt nyhetsbrev</title>
 </head>
 <body>
-    <h1>Mina nyhetsbrev</h1>
+    <h1>Mitt nyhetsbrev</h1>
     <ul>
         <?php 
         if ($my_newsletters) {
             foreach ($my_newsletters as $newsletter): 
         ?>
-            <li><?php echo htmlspecialchars($newsletter['title']); ?></li>
+         <b><?php echo htmlspecialchars($newsletter['title']); ?></b>
+         <br></br>
+           <?php echo htmlspecialchars($newsletter['description']); ?>
+           <br></br>
             <a href="editNewsletter.php"><button>Redigera nyhetbrev</button></a>
 
         <?php 

@@ -1,12 +1,6 @@
 <?php
 session_start();
-include 'functions.php';
-
-function validate_input($data) {
-    $data = trim($data);
-    $data = htmlspecialchars($data);
-    return $data;
-}
+include_once 'functions.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $connect = connect_database();
@@ -34,9 +28,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             $stmt->bind_param("sssss", $firstname, $lastname, $email, $password, $role);
-
             if ($stmt->execute()) {
-                $_SESSION['message'] = "Konto skapat. Du kan nu logga in.";
+                $_SESSION['user_email'] = $email;
+                $_SESSION['user_role'] = $role;
+
+                if ($role === 'customer') {
+                    header("Location: createNewsletter.php");
+                    exit;
+                } else {
+                    header("Location: login.php");
+                    exit;
+                }
             } else {
                 $_SESSION['message'] = "Fel: " . htmlspecialchars($stmt->error);
             }

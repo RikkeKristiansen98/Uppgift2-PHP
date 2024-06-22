@@ -164,4 +164,22 @@ function get_newsletters_by_user_email($user_email) {
     $connect->close();
     return $newsletters;
 }
+function create_newsletter($title, $description, $user_email) {
+    $connect = connect_database();
+    $stmt = $connect->prepare("INSERT INTO newsletter (title, description, user) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $title, $description, $user_email);
+
+    $success = $stmt->execute();
+
+    $stmt->close();
+    $connect->close();
+
+    return $success;
+}
+
+function validate_input($data) {
+    $data = trim($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
 ?>

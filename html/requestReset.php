@@ -2,6 +2,7 @@
 include_once("functions.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    ob_start(); 
     $email = $_POST['email'];
 
     $user = get_user_by_email($email);
@@ -20,12 +21,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = send_email($email, $subject, $body);
 
         if ($result) {
-            echo "Återställningskoden har skickats till din e-postadress.";
+            session_start();
+            $_SESSION['reset_email'] = $email;
+            $_SESSION['reset_code'] = $resetCode;
+
+            ob_end_clean();
+            header("Location: newpassword.php");
+            exit();
         } else {
-            echo "Det gick inte att skicka återställningskoden. Kontrollera loggarna för mer information.";
+            echo "Det gick inte att skicka återställningskoden.";
         }
     } else {
-        echo "E-postadressen finns inte i vår databas.";
+        echo "E-postadressen finns inte registrerad i vår databas.";
     }
 }
 ?>
