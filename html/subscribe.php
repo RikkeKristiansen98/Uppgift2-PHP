@@ -2,11 +2,6 @@
 session_start();
 include 'functions.php';
 
-function validate_input($data) {
-    $data = trim($data); // ta bort eventuella onödiga mellanslag
-    $data = htmlspecialchars($data);
-    return $data;
-}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $connect = connect_database();

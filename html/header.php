@@ -21,7 +21,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <a href="mySubsciptions.php">Mina prenumerationer</a>
             <?php endif; ?>                
             <a href="<?php echo ($_SESSION['role'] === 'customer') ? 'myNewsletter.php' : 'newsletters.php'; ?>">
-                <?php echo ($_SESSION['role'] === 'customer') ? 'Mina nyhetsbrev' : 'Alla nyhetsbrev'; ?>
+                <?php echo ($_SESSION['role'] === 'customer') ? 'Mitt nyhetsbrev' : 'Alla nyhetsbrev'; ?>
             </a>
             <form action="logout.php" method="post" style="display:inline;">
                 <button type="submit">Logga ut</button>
