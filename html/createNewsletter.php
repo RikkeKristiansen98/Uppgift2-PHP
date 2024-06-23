@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['message'] = "Det uppstod ett fel vid skapandet av nyhetsbrevet.";
     }
 
-    header("Location: createNewsletter.php");
+    header("Location: myNewsletter.php");
     exit;
 }
 
@@ -48,10 +48,8 @@ if (isset($_SESSION['message'])) {
     <input type="text" id="title" name="title" required><br>
     <label for="description">Beskrivning:</label><br>
     <textarea id="description" name="description" rows="4" cols="50" required></textarea><br>
-    <input type="submit" value="Skapa nyhetsbrev">
+    <a href="myNewsletter.php"><input type="submit" value="Skapa nyhetsbrev"></a>
 </form>
-
-<a href="logout.php">Logga ut</a>
 
 </body>
 </html>
