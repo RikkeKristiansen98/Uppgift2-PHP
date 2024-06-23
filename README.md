@@ -1,5 +1,6 @@
 
 .env 
+
 domain_mailgun=""
 
 api_key=""
