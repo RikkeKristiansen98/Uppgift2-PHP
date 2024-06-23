@@ -1,47 +1,36 @@
 <?php
-include_once("functions.php");
+session_start();
+include 'functions.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'customer') {
     header("Location: login.php");
     exit;
 }
 
 $user_email = $_SESSION['user_email'];
+$newsletters = get_newsletters_by_user_email($user_email);
 
-$my_newsletters = get_newsletters_by_user_email($user_email);
 include("header.php");
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mitt nyhetsbrev</title>
-</head>
-<body>
-    <h1>Mitt nyhetsbrev</h1>
-    <ul>
-        <?php 
-        if ($my_newsletters) {
-            foreach ($my_newsletters as $newsletter): 
-        ?>
-         <b><?php echo htmlspecialchars($newsletter['title']); ?></b>
-         <br></br>
-           <?php echo htmlspecialchars($newsletter['description']); ?>
-           <br></br>
-            <a href="editNewsletter.php"><button>Redigera nyhetbrev</button></a>
+<h2>Mina nyhetsbrev</h2>
 
-        <?php 
-            endforeach; 
-        } else {
-            echo "<li>Inga nyhetsbrev hittades.</li>";
-        }
-        ?>
-    </ul>
-</body>
-</html>
+<?php if (!empty($newsletters)): ?>
+<?php foreach ($newsletters as $newsletter): ?>
+  <h3><?php echo htmlspecialchars($newsletter['title']); ?></h3>
+  <p><?php echo htmlspecialchars($newsletter['description']); ?></p>
+  <form action="editNewsletter.php" method="GET" style="display: inline;">
+  <input type="hidden" name="id" value="<?php echo $newsletter['id']; ?>">
+    <button type="submit">Redigera</button>
+</form>        
+<?php endforeach; ?>
+<?php else: ?>
+    <p>Du har inga nyhetsbrev än.</p>
+<?php endif; ?>
+
+<?php
+if (isset($_SESSION['message'])) {
+    echo "<p>{$_SESSION['message']}</p>";
+    unset($_SESSION['message']);
+}
+?>

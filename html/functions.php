@@ -2,6 +2,8 @@
 require_once __DIR__ . '/config.php'; 
 
 $env = loadEnv(__DIR__ . '/.env');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start(); }
 
 function connect_database() {
     $host = "db";
