@@ -1,16 +1,16 @@
 <?php
-session_start();
+ob_start();
+
 include 'functions.php';
+include("header.php");
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'customer') {
-    header("Location: login.php");
+    header('Location: noAccess.php');
     exit;
 }
 
 $user_email = $_SESSION['user_email'];
 $newsletters = get_newsletters_by_user_email($user_email);
-
-include("header.php");
 ?>
 
 <h2>Mina nyhetsbrev</h2>
@@ -29,8 +29,11 @@ include("header.php");
 <?php endif; ?>
 
 <?php
-if (isset($_SESSION['message'])) {
-    echo "<p>{$_SESSION['message']}</p>";
-    unset($_SESSION['message']);
-}
+    if (isset($_SESSION['message'])) {
+        echo "<p>{$_SESSION['message']}</p>";
+        unset($_SESSION['message']);
+    }
+    ob_end_flush(); 
 ?>
+</body>
+</html>
