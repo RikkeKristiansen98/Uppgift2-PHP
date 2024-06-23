@@ -3,10 +3,19 @@ session_start();
 include 'functions.php';
 
 if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'customer') {
-    header("Location: login.php");
+    header("Location: noAccess.php");
     exit;
 }
 
+$user_email = isset($_SESSION['user_email']) ? $_SESSION['user_email'] : null;
+
+$newsletters_created = get_newsletters_by_user_email($user_email);
+
+if (!empty($newsletters_created)) {
+    $_SESSION['message'] = "Du har redan skapat ett nyhetsbrev och kan inte skapa fler.";
+    header("Location: noAccess.php");
+    exit;
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $title = validate_input($_POST['title']);
     $description = validate_input($_POST['description']);
@@ -23,8 +32,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: myNewsletter.php");
     exit;
 }
-
-include("header.php");
 ?>
 
 <!DOCTYPE html>

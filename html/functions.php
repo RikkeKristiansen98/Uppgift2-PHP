@@ -179,6 +179,18 @@ function create_newsletter($title, $description, $user_email) {
     return $success;
 }
 
+function get_all_newsletters() {
+    $connect = connect_database();
+    $stmt = $connect->prepare("SELECT id, title FROM newsletter");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $newsletters = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    $connect->close();
+    return $newsletters;
+}
+
+
 function validate_input($data) {
     $data = trim($data);
     $data = htmlspecialchars($data);

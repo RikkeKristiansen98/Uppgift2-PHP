@@ -3,7 +3,7 @@ session_start();
 include 'functions.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'customer') {
-    header("Location: login.php");
+    header("Location: noAccess.php");
     exit;
 }
 
