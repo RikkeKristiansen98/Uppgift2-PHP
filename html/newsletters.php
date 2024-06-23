@@ -1,60 +1,53 @@
 <?php
-//TODO länk till varje nyhetsbrevs sida
 session_start();
-include 'functions.php';
+include_once("functions.php");
 include("header.php");
 
-if (isset($_SESSION['message'])) {
-    echo "<p>{$_SESSION['message']}</p>";
-    unset($_SESSION['message']); 
-}
-$connect = connect_database();
+$mysqli = connect_database();
 
-$sql = "SELECT * FROM newsletter ORDER BY id DESC";
-$result = $connect->query($sql);
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['newsletter_id'])) {
+    $newsletter_id = $_GET['newsletter_id'];
+    $newsletter = get_newsletter_by_id($newsletter_id);
 
-$user_role = isset($_SESSION['role']) ? $_SESSION['role'] : null;
-$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+    if ($newsletter) {
+        echo '<h2>' . htmlspecialchars($newsletter['title']) . '</h2>';
+        echo '<p>' . htmlspecialchars($newsletter['description']) . '</p>';
 
+        if (isset($_SESSION['user_id'])) {
+            $user_id = $_SESSION['user_id'];
+            $user_role = isset($_SESSION['role']) ? $_SESSION['role'] : null;
 
-$user_email = null;
-if ($user_id) {
-    $user = get_user_by_id($user_id);
-    if ($user) {
-        $user_email = $user['user_email'];
+            if ($user_role === 'subscriber') {
+                $subscriptions = get_user_subscriptions($_SESSION['user_email']);
+                if (in_array($newsletter['title'], $subscriptions)) {
+                    echo '<form method="POST" action="unsubscribe.php">';
+                    echo '<input type="hidden" name="newsletter_title" value="' . $newsletter['title'] . '" />';
+                    echo '<button type="submit" name="unsubscribe">Avregistrera</button>';
+                    echo '</form>';
+                } else {
+                    echo '<form method="POST" action="subscribe.php">';
+                    echo '<input type="hidden" name="newsletter_title" value="' . $newsletter['title'] . '" />';
+                    echo '<button type="submit" name="subscribe">Prenumerera</button>';
+                    echo '</form>';
+                }
+            } elseif ($user_role === 'customer') {
+                echo '<p>Du är en kund och kan inte prenumerera på nyhetsbrev.</p>';
+            }
+        } else {
+            echo '<p><a href="login.php">Logga in</a> för att prenumerera på detta nyhetsbrev.</p>';
+        }
+    } else {
+        echo '<p>Nyhetsbrevet hittades inte.</p>';
     }
-}
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-
-        echo "<h1>" . htmlspecialchars($row['title']) . "</h1>";
-        echo "<p>" . htmlspecialchars($row['description']) . "</p>";
-        if ($user_role === 'subscriber' && $user_id) {
-            echo '<form action="subscribe.php" method="post" style="display:inline;">
-                    <input type="hidden" name="newsletter_title" value="' . htmlspecialchars($row['title']) . '">
-                    <input type="hidden" name="user_email" value="' . htmlspecialchars($user_email) . '">
-                    <button type="submit">Prenumerera på nyhetsbrev</button>
-                  </form>';
-        } elseif ($user_role === 'customer') {
-            echo '<a href="editNewsletter.php?id=' . htmlspecialchars($row['id']) . '">
-                    <button>Klicka för att redigera nyhetsbrev</button>
-                  </a>';
-        }
-        
-        }
-        echo "<hr>";
 } else {
-    echo "Inga nyhetsbrev hittades.";
+    echo '<h2>Alla tillgängliga nyhetsbrev</h2>';
+    echo '<ul>';
+    $newsletters = get_all_newsletters();
+    foreach ($newsletters as $newsletter) {
+        echo '<li><a href="newsletters.php?newsletter_id=' . $newsletter['id'] . '">' . htmlspecialchars($newsletter['title']) . '</a></li>';
+    }
+    echo '</ul>';
 }
 
-$connect->close();
-if (!$user_id) { 
-echo '<!DOCTYPE html>
-<html>
-<body>
-    <p>Logga in eller skapa et konto för att prenumerera på nyhetsbrev.</p>
-</body>
-    </html>';
-}
-    ?>
+$mysqli->close();
+?>

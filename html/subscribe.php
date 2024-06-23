@@ -2,15 +2,13 @@
 session_start();
 include 'functions.php';
 
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $connect = connect_database();
 
-    if (isset($_POST['newsletter_title']) && isset($_POST['user_email'])) {
+    if (isset($_POST['newsletter_title']) && isset($_SESSION['user_email'])) {
         $newsletter_title = validate_input($_POST['newsletter_title']);
-        $user_email = validate_input($_POST['user_email']);
+        $user_email = validate_input($_SESSION['user_email']);
 
-        // Kollar om användaren redan prenumererar
         $check_sql = "SELECT * FROM subscriptions WHERE newsletter = ? AND user_email = ?";
         $stmt = $connect->prepare($check_sql);
         $stmt->bind_param("ss", $newsletter_title, $user_email);
@@ -41,6 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['message'] = "Felaktig begäran.";
     }
 
-    header("Location: newsletters.php");
-    exit;
+    header("Location: mySubsciptions.php");
+    exit();
 }
+?>
