@@ -1,6 +1,8 @@
 <?php
 include_once("functions.php");
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['email']) && isset($_POST['password'])) {

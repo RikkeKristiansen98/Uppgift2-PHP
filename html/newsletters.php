@@ -34,7 +34,7 @@ if ($result->num_rows > 0) {
             echo '<form action="subscribe.php" method="post" style="display:inline;">
                     <input type="hidden" name="newsletter_title" value="' . htmlspecialchars($row['title']) . '">
                     <input type="hidden" name="user_email" value="' . htmlspecialchars($user_email) . '">
-                    <button type="submit">Abonnera på nyhetsbrev</button>
+                    <button type="submit">Prenumerera på nyhetsbrev</button>
                   </form>';
         } elseif ($user_role === 'customer') {
             echo '<a href="editNewsletter.php?id=' . htmlspecialchars($row['id']) . '">
@@ -53,8 +53,7 @@ if (!$user_id) {
 echo '<!DOCTYPE html>
 <html>
 <body>
-    <p>Logga in eller skapa et konto för att prenumerera på nyhetsbrev</p>
-<a href="login.php"><button>Logga in</button></a><a href="signUp.php"><button>Skapa konto</button></a>
+    <p>Logga in eller skapa et konto för att prenumerera på nyhetsbrev.</p>
 </body>
     </html>';
 }

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require 'functions.php';
+include("header.php"); 
 
 if (!isset($_SESSION['user_email']) || $_SESSION['role'] !== 'customer') {
     header('Location: login.php');
@@ -38,7 +39,6 @@ $subscribers = get_customers_subscribers($userEmail);
                 </tr>
             <?php endforeach; ?>
         </table>
-        <a href="index.php"><button>Gå tillbaka</button></a>
     <?php endif; ?>
 </body>
 </html>

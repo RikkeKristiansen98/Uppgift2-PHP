@@ -3,25 +3,19 @@ session_start();
 include 'functions.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'customer') {
-    echo "Session ID: " . session_id() . "<br>";
-    echo "User ID: " . $_SESSION['user_id'] . "<br>";
-    echo "Role: " . $_SESSION['role'] . "<br>";
-    
     header("Location: login.php");
     exit;
 }
 
 $newsletter_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-
 $user_email = $_SESSION['user_email'];
 $newsletter = get_newsletter_by_id($newsletter_id);
 
 if (!$newsletter || $newsletter['user'] !== $user_email) {
     $_SESSION['message'] = "Du har inte behörighet att redigera detta nyhetsbrev.";
-    header("Location: newsletters.php");
+    header("Location: myNewsletter.php");
     exit;
 }
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'];
@@ -29,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (update_newsletter($newsletter_id, $title, $description)) {
         $_SESSION['message'] = "Nyhetsbrevet uppdaterades!";
-        header("Location: newsletters.php");
+        header("Location: myNewsletter.php");
         exit;
     } else {
         $error_message = "Kunde inte uppdatera nyhetsbrevet. Försök igen.";
@@ -38,6 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include("header.php");
 ?>
+
+<h2>Redigera nyhetsbrev</h2>
 
 <form method="POST">
     <label for="title">Titel:</label>
