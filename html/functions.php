@@ -102,13 +102,54 @@ function get_newsletter_by_id($id) {
 
 function update_newsletter($id, $title, $description) {
     $connect = connect_database();
-    $stmt = $connect->prepare("UPDATE newsletter SET title = ?, description = ? WHERE id = ?");
-    $stmt->bind_param("ssi", $title, $description, $id);
-    $success = $stmt->execute();
+
+    $original_title = get_newsletter_title_by_id($id);
+
+    $stmt_newsletter = $connect->prepare("UPDATE newsletter SET title = ?, description = ? WHERE id = ?");
+    $stmt_newsletter->bind_param("ssi", $title, $description, $id);
+    $success_newsletter = $stmt_newsletter->execute();
+
+    if (!$success_newsletter) {
+        echo "Error updating newsletter: " . $stmt_newsletter->error;
+        $stmt_newsletter->close();
+        $connect->close();
+        return false;
+    }
+
+    $stmt_newsletter->close();
+
+    $stmt_subscriptions = $connect->prepare("UPDATE subscriptions SET newsletter = ? WHERE newsletter = ?");
+    $stmt_subscriptions->bind_param("ss", $title, $original_title); 
+
+    $stmt_subscriptions->execute();
+
+    if ($stmt_subscriptions->errno) {
+        echo "Error updating subscriptions: " . $stmt_subscriptions->error;
+        $stmt_subscriptions->close();
+        $connect->close();
+        return false;
+    }
+
+    $stmt_subscriptions->close();
+    $connect->close();
+
+    return true;
+}
+
+
+function get_newsletter_title_by_id($id) {
+    $connect = connect_database();
+    $stmt = $connect->prepare("SELECT title FROM newsletter WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $newsletter = $result->fetch_assoc();
     $stmt->close();
     $connect->close();
-    return $success;
+
+    return $newsletter['title'];
 }
+
 
 function get_user_subscriptions($user_email) {
     $connect = connect_database();

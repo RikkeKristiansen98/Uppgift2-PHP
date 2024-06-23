@@ -1,10 +1,11 @@
 <?php
+ob_start();
 session_start();
 require 'functions.php';
 include("header.php"); 
 
 if (!isset($_SESSION['user_email']) || $_SESSION['role'] !== 'customer') {
-    header('Location: login.php');
+    header('Location: noAccess.php');
     exit;
 }
 
@@ -28,17 +29,17 @@ $subscribers = get_customers_subscribers($userEmail);
                 <th>Förnamn</th>
                 <th>Efternamn</th>
                 <th>E-post</th>
-                <th>Nyhetsbrev</th>
             </tr>
             <?php foreach ($subscribers as $subscriber): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($subscriber['firstname']); ?></td>
                     <td><?php echo htmlspecialchars($subscriber['lastname']); ?></td>
                     <td><?php echo htmlspecialchars($subscriber['user_email']); ?></td>
-                    <td><?php echo htmlspecialchars($subscriber['title']); ?></td>
                 </tr>
             <?php endforeach; ?>
         </table>
     <?php endif; ?>
+    <?php ob_end_flush();
+    ?>
 </body>
 </html>

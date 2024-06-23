@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 include 'functions.php';
 
@@ -49,4 +50,5 @@ include("header.php");
 if (isset($error_message)) {
     echo "<p>$error_message</p>";
 }
+ob_end_flush();
 ?>
